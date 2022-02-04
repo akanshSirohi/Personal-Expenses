@@ -131,6 +131,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       builder: (bCtx) {
         return GestureDetector(
           child: NewTransaction(_addTransaction),
