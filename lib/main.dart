@@ -6,6 +6,12 @@ import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 
 void main() {
+  // Orientation Lock
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
   runApp(MyApp());
 }
 
@@ -99,6 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
       date: DateTime.now().subtract(Duration(days: 2)),
     )
   ];
+  bool _showChart = true;
 
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
@@ -131,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
+      isScrollControlled: true,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       builder: (bCtx) {
         return GestureDetector(
@@ -144,25 +152,59 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-        actions: [
-          IconButton(
-            onPressed: () => startAddNewTransaction(context),
-            icon: Icon(Icons.add),
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+      actions: [
+        // Switch(value: false, onChanged: (e) {}),
+        if (isLandscape)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("Chart"),
+              Switch(
+                  value: _showChart,
+                  activeColor: Colors.amber,
+                  onChanged: (e) {
+                    setState(() {
+                      _showChart = e;
+                    });
+                  }),
+            ],
           ),
-        ],
+        IconButton(
+          onPressed: () => startAddNewTransaction(context),
+          icon: Icon(Icons.add),
+        ),
+      ],
+    );
+    final txList = Container(
+      height: (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          (isLandscape ? 1 : 0.75),
+      child: TransactionList(
+        transactions: _userTransactions,
+        deleteTransaction: _deleteTransaction,
       ),
+    );
+    final chart = Container(
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            (isLandscape ? 0.7 : 0.25),
+        child: Chart(_recentTransactions));
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Chart(_recentTransactions),
-            TransactionList(
-              transactions: _userTransactions,
-              deleteTransaction: _deleteTransaction,
-            )
+            if (!isLandscape) chart,
+            if (!isLandscape) txList,
+            if (isLandscape) _showChart ? chart : txList
           ],
         ),
       ),
