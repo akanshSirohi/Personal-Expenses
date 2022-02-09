@@ -36,8 +36,10 @@ class TransactionList extends StatelessWidget {
         : ListView.builder(
             itemBuilder: (ctx, index) {
               return TransactionItem(
-                  transaction: transactions[index],
-                  deleteTransaction: deleteTransaction);
+                // key: ValueKey(transactions[index].id), // Only req with stateful elements
+                transaction: transactions[index],
+                deleteTransaction: deleteTransaction,
+              );
             },
             itemCount: transactions.length,
           );
