@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import './models/transaction.dart';
@@ -74,36 +76,6 @@ class _MyHomePageState extends State<MyHomePage> {
       amount: 200.55,
       date: DateTime.now().subtract(Duration(days: 2)),
     ),
-    Transaction(
-      id: 't5',
-      title: 'Weekly Groceries',
-      amount: 200.55,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't6',
-      title: 'Weekly Groceries',
-      amount: 200.55,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't7',
-      title: 'Weekly Groceries',
-      amount: 200.55,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't8',
-      title: 'Weekly Groceries',
-      amount: 200.55,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    ),
-    Transaction(
-      id: 't9',
-      title: 'Weekly Groceries',
-      amount: 200.55,
-      date: DateTime.now().subtract(Duration(days: 2)),
-    )
   ];
   bool _showChart = true;
 
@@ -158,7 +130,6 @@ class _MyHomePageState extends State<MyHomePage> {
     final appBar = AppBar(
       title: Text('Personal Expenses'),
       actions: [
-        // Switch(value: false, onChanged: (e) {}),
         if (isLandscape)
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -208,10 +179,12 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => startAddNewTransaction(context),
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: Platform.isAndroid
+          ? FloatingActionButton(
+              onPressed: () => startAddNewTransaction(context),
+              child: Icon(Icons.add),
+            )
+          : Container(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
